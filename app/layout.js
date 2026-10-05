@@ -1,7 +1,7 @@
 export const metadata = {
   metadataBase: new URL("https://said.nyttolabs.com"),
   title: "Said — försegla en mening",
-  description: "Skriv en mening. Betala €2. Få en publik sida som visar att du sa det, och när.",
+  description: "Skriv en mening. Betala €2. Få en publik sida med orden, bekräftad betalning och kassans starttid.",
   alternates: { canonical: "/" },
   openGraph: { title: "Said", description: "En mening. Två euro. En publik sida.", url: "https://said.nyttolabs.com" }
 };

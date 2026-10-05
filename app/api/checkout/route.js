@@ -1,16 +1,17 @@
 import Stripe from "stripe";
 
 export async function POST(req) {
-  const { text } = await req.json().catch(() => ({}));
-  const line = String(text || "").trim().replace(/\s+/g, " ");
+  const body = await req.json().catch(() => null);
+  const line = typeof body?.text === "string" ? body.text.trim().replace(/\s+/g, " ") : "";
   if (line.length < 8 || line.length > 240) {
     return Response.json({ error: "Write between 8 and 240 characters." }, { status: 400 });
   }
   if (!process.env.STRIPE_SECRET_KEY) {
     return Response.json({ error: "Stripe is not connected on this deploy yet." }, { status: 500 });
   }
+  try {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_URL;
+  const origin = process.env.NEXT_PUBLIC_URL || new URL(req.url).origin;
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     line_items: [{ price: process.env.STRIPE_PRICE_ID || "price_1UNHHOBEo0Yzuylw5NNOviXB", quantity: 1 }],
@@ -19,5 +20,8 @@ export async function POST(req) {
     metadata: { text: line, app: "said" },
     payment_intent_data: { metadata: { text: line, app: "said" } }
   });
-  return Response.json({ url: session.url });
+  return Response.json({ url: session.url }, { headers: { "Cache-Control": "no-store" } });
+  } catch {
+    return Response.json({ error: "Could not start checkout. Please try again." }, { status: 502 });
+  }
 }

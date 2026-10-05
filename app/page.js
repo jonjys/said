@@ -18,6 +18,7 @@ export default function Home() {
     e.preventDefault();
     setErr("");
     setBusy(true);
+    try {
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -30,13 +31,17 @@ export default function Home() {
       return;
     }
     window.location = data.url;
+    } catch {
+      setErr("Kunde inte öppna kortbetalning. Försök igen.");
+      setBusy(false);
+    }
   }
 
   return (
     <main>
       <div className="kicker">SAID · NYTTO LABS</div>
       <h1>Säg det en gång. Sidan blir kvittot.</h1>
-      <p className="sub">En mening. €2. En publik sida med tiden du betalade och en hash av orden. Inget konto. Sidan är beviset.</p>
+      <p className="sub">En mening. €2. En publik sida med bekräftad betalning, kassans starttid och en hash av orden. Inget konto.</p>
       <div className="chips">
         {LINES.map((item) => (
           <button type="button" className="chip" key={item} onClick={() => setText(item)}>{item}</button>
@@ -48,13 +53,13 @@ export default function Home() {
         <article className="receipt">
           <div className="kicker">SÅ HÄR SER SIDAN UT</div>
           <p className="line">“{line || "Skriv meningen först."}”</p>
-          <p className="meta">Betald tid · hash av exakt den här texten · {line.length} tecken</p>
+          <p className="meta">Kassans starttid · bekräftad betalning · hash av exakt den här texten · {line.length} tecken</p>
         </article>
         <div className="meta">{line.length}/240 · €2 · kort via Stripe</div>
         <button disabled={busy || line.length < 8}>{busy ? "Öppnar kortbetalning" : "Försegla meningen · €2"}</button>
         {err ? <p className="err">{err}</p> : null}
       </form>
-      <footer>Sidan visar orden och betalningstiden. Den visar inte att meningen är sann. hello@nyttolabs.com</footer>
+      <footer>Sidan visar orden och bekräftar betalningen. Tiden anger när kassan öppnades. Den visar inte att meningen är sann. hello@nyttolabs.com</footer>
     </main>
   );
 }

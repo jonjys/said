@@ -15,10 +15,10 @@ export default function Success() {
   }, []);
   return (
     <main>
-      <div className="kicker">PAID</div>
-      <h1>Your line is sealed.</h1>
-      {err ? <p>{err}</p> : href ? <p><a className="btn" href={href}>Open the public page</a></p> : <p className="meta">Checking the payment.</p>}
-      <p className="meta">Send that link. The bottom of it sells the next seal.</p>
+      <div className="kicker">SAID</div>
+      <h1>{href ? "Your line is sealed." : err ? "Payment needs checking." : "Checking your payment."}</h1>
+      {err ? <><p>{err}</p><button onClick={() => location.reload()}>Try again</button></> : href ? <><p><a className="btn" href={href}>Open the public page</a></p><input aria-label="Your public page link" readOnly value={href} onFocus={(event) => event.target.select()} style={{ width: "100%" }} /></> : <p className="meta">Checking the payment.</p>}
+      <p className="meta">Copy and keep your link. Send it to someone who should see your words.</p>
     </main>
   );
 }
